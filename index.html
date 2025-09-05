@@ -7,67 +7,194 @@
     <title>Ahmed Bagy - Data Analyst & Software Developer</title>
     <link rel="icon" type="image/png" href="logo.jpg"> <!-- Favicon -->
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0A0A0A;
+            color: #E6E6E6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center; /* Only header is centered */
+            padding: 50px 20px;
+            background-color: #1A1A1A;
+        }
+        h1 {
+            font-size: 3em;
+            color: #FFA500; /* Changed to orange */
+            margin: 0;
+        }
+        p, ul {
+            color: #B2B2B2;
+            font-size: 0.9em;
+            text-align: justify; /* Justified text */
+        }
+        a {
+            color: #FFA500; /* Changed to orange */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        section {
+            padding: 40px 20px;
+            border-bottom: 1px solid #333;
+        }
+        h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+            border-bottom: 2px solid #FFA500; /* Changed to orange */
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 10px 0;
+            font-size: 1.1em;
+            color: #E6E6E6;
+        }
+        .skills ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        iframe {
+            border: none;
+            border-radius: 0;
+            background-color: #111;
+            width: 100%;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #1A1A1A;
+            color: #777;
+        }
+        footer p {
+            margin: 0;
+        }
+        .experience ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .experience li::before {
+            content: "- "; /* Dash before each bullet point */
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
         <header>
-            <h1 style="text-align: center; margin-bottom: 20px;">Ahmed Bagy</h1>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 40px;">
-                
-                <!-- LinkedIn Badge -->
-                <div class="badge-base LI-profile-badge" 
-                     data-locale="en_US" 
-                     data-size="medium" 
-                     data-theme="dark" 
-                     data-type="VERTICAL" 
-                     data-vanity="ahmedbagy" 
-                     data-version="v1">
-                </div>
-
-                <!-- Contact Info -->
-                <div style="flex: 1; text-align: center;">
-                    <p style="margin: 5px 0;">Zahraa El-Maadi, Cairo, Egypt | Tele: 01120596522 | WhatsApp: 01229445692</p>
-                    <p style="margin: 5px 0;">
-                        Email: <a href="mailto:ahmedbagy@gmail.com">ahmedbagy@gmail.com</a> | 
-                        <a href="https://www.datacamp.com/portfolio/ahmedbagy" target="_blank">DataCamp</a> | 
-                        <a href="https://github.com/AhmedBagy" target="_blank">GitHub</a> | 
-                        <a href="https://www.linkedin.com/in/ahmedbagy" target="_blank">LinkedIn</a>
-                    </p>
-                    <p style="margin: 5px 0; font-style: italic; color: #bbb;">
-                        Ongoing in my Master’s degree
-                    </p>
-                </div>
-            </div>
+            <h1>Ahmed Bagy</h1>
+            <p style="text-align: center;">Zahraa El-Maadi, Cairo, Egypt | Tele: 01120596522 | WhatsApp: 01229445692</p>
+            <p style="text-align: center;">Email: <a href="mailto:ahmedbagy@gmail.com">ahmedbagy@gmail.com</a> | <a href="https://www.datacamp.com/portfolio/ahmedbagy" target="_blank">DataCamp</a> | <a href="https://github.com/AhmedBagy" target="_blank">GitHub</a> | <a href="https://www.linkedin.com/in/ahmedbagy" target="_blank">LinkedIn</a></p>
         </header>
-
         <section id="summary">
             <h2>Summary</h2>
+            <p>I am a seasoned Data Analyst with extensive experience in automating processes, data visualization, and machine learning. At Pixelogic Media, I introduced ML and developed numerous tools and reporting dashboards. My background in Geophysics and certifications in SQL, Python, and ML highlight my technical expertise and dedication to continuous learning. Fluent in Arabic, proficient in US English, and fairly proficient in Français. Military service completed in March 2020, born in September 1995, graduated in May 2018, and pursuing a master's degree.</p>
+        </section>
+
+        <section>
+            <h2>Work Experience</h2>
+        
+            <h3>Data Analyst | Media Operator II @ <a href="https://pixelogicmedia.com/">Pixelogic Media</a>  <span>(Jan 2024 - Currently)</span></h3>
             <p>
-                Data Analyst & Software Developer with expertise in SQL, Python, and dashboard creation. Experienced in 
-                building automation solutions, data pipelines, and analytical tools. Skilled in visualization using 
-                Metabase, problem-solving, and delivering actionable business insights. Currently pursuing a Master’s 
-                degree in Geophysics, enhancing analytical and problem-solving capabilities.
+                - Introduced ML and NN for fresh client solutions.<br>
+                - Automated processes improving operational efficiency.<br>
+                - Developed Metabase dashboards using SQL, Python, and Postman.<br>
+                - Created batch script tools for enhanced department technology.
+            </p>
+        
+            <h3>Media Operator @ <a href="https://pixelogicmedia.com/">Pixelogic Media</a>  <span>(July 2022 - Dec 2023)</span></h3>
+            <p>
+                - Gained valuable experience with QuickBase and OM.<br>
+                - Analyzed data using SQL, Python, and Excel.<br>
+                - Improved data visualization with Metabase for team insights.
+            </p> 
+         
+            <h3>Video Editor @ <a href="https://ok-adv.com/Media/">Ok Media Solutions</a> <span>(Nov 2020 - June 2022)</span></h3>
+            <p>
+                - Managed raw footage, special effects, and motion graphics.<br>
+                - Delivered client satisfaction through a customer-centered approach.<br>
+                - Provided account management with excellent communication skills.
+            </p>
+            <h3>Freelance Video Editor @ <a href="https://linktr.ee/AhmedBagy">Online Platforms</a> <span>(Nov 2018 - June 2020)</span></h3>
+            <p>
+                - Produced video content with strong storytelling techniques.<br>
+                - Ensured continuity and seamless special effects in video projects.
             </p>
         </section>
-
-        <section id="experience">
-            <h2>Experience</h2>
-            <h3>Media Operator II (Data Analyst) – Pixelogic Media</h3>
-            <p>Automated processes, built dashboards, and introduced ML & neural networks for workflow optimization.</p>
+        
+        <section>
+            <h2>Skills</h2>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+                <ul style="list-style-type: disc; padding-left: 20px; width: 45%;">
+                    <li>Analyzing/Reporting skills</li>
+                    <li>Presentation skills</li>
+                    <li>Creative Thinking / Problem Solving</li>
+                    <li>Adaptability / Continuous Learning</li>
+                    <li>Communication skills</li>
+                    <li>Adobe: AE, Au, Me, Pr, Ai, Ps</li>
+                </ul>
+                <ul style="list-style-type: disc; padding-left: 20px; width: 45%;">
+                    <li>IT background (Hardware/Software)</li>
+                    <li>Programming: Python, SQL, Batch, API & JSON, HTML+CSS</li>
+                    <li>AI: Machine Learning (ML)</li>
+                    <li>IDEs: Jupyter Notebook, Anaconda, Visual Studio, CMD terminal</li>
+                    <li>Microsoft Office: Excel, PowerPoint, Word</li>
+                </ul>
+            </div>
         </section>
-
-        <section id="education">
+        
+        <section>
             <h2>Education</h2>
-            <p>MSc in Geophysics (Ongoing) – Helwan University</p>
-            <p>BSc in Geophysics – Helwan University</p>
+        
+            <h3>Master’s degree in Geophysics</h3>
+        
+            <h3>Certified Pre-Master Studies in Geophysics [B+] <span>(May 2019)</span></h3>
+        
+            <h3>Faculty of Science, Helwan University <span>(May 2018)</span></h3>
+            <p>
+                - B.Sc. degree in Geophysics with a very good grade.
+            </p>
+        
+            <h3>Graduated from Hadayek El-Maadi Experimental Language School</h3>
+        </section>
+        
+        <section id="ai-search">
+            <h2>Engage with My AI Brainchild</h2>
+            <p>Looking for insights? Start a conversation with my AI assistant, designed to provide fast answers and help you explore data insights, tech discussions, and more!</p>
+            
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <img src="PP.png" alt="Ahmed Bagy" style="width: 100px; height: auto; border-radius: 50%; margin-right: 20px;"> <!-- Profile photo -->
+                <a href="https://real-chat-me.vercel.app/" target="_blank" style="background-color: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px; text-decoration: none; color: #000;">Talk to My AI Assistant</a>
+            </div>
+        </section>
+        
+
+        <section id="certifications">
+            <h2>Certifications</h2>
+            <ul>
+                <li>- Data Analysis Track</li>
+                <li>- Python & ML Track</li>
+                <li>- BC English Course B2 Level</li>
+            </ul>
         </section>
 
         <footer>
-            <p style="text-align: center; margin-top: 20px;">© 2025 Ahmed Bagy</p>
+            <p>&copy; 2025 Ahmed Bagy - Data Analyst & Software Developer</p>
         </footer>
     </div>
-
-    <!-- LinkedIn Badge Script -->
-    <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
+    
 </body>
 </html>
