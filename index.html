@@ -4,213 +4,760 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ahmed Bagy - Data Analyst & Software Developer</title>
-    <link rel="icon" type="image/png" sizes="512x512" href="logo.jpg">
-
-    <link rel="stylesheet" href="style.css">
+    <title>Ahmed Bagy - Business & Data Analyst | Media Operations Specialist</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #0A0A0A;
-            color: #E6E6E6;
+        :root {
+            --dark-bg: #0A0A0A;
+            --section-bg: #111111;
+            --border-color: #333;
+            --text-primary: #E6E6E6;
+            --text-secondary: #B2B2B2;
+            --accent-color: #FFA500;
+            --accent-hover: #FFB733;
+            --card-bg: #1A1A1A;
+            --footer-bg: #0F0F0F;
+        }
+        
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
         .container {
-            max-width: 960px;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(135deg, var(--section-bg) 0%, var(--dark-bg) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,165,0,0.1) 0%, rgba(10,10,10,0) 70%);
+            z-index: 0;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 3.8rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 165, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+        
+        .contact-info {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            font-size: 1.05rem;
+        }
+        
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .contact-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 15px;
+        }
+        
+        .contact-links a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .contact-links a:hover {
+            color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        
+        .contact-links a::after {
+            content: "→";
+            margin-left: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .contact-links a:hover::after {
+            opacity: 1;
+        }
+        
+        /* Section Styles */
+        section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        section:last-child {
+            border-bottom: none;
+        }
+        
+        h2 {
+            font-size: 2.4rem;
+            margin-bottom: 35px;
+            color: var(--text-primary);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60%;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        h3 {
+            font-size: 1.7rem;
+            margin: 25px 0 15px;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        
+        h4 {
+            font-size: 1.4rem;
+            margin: 15px 0 10px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        
+        ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+        
+        ul li {
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        ul li::before {
+            content: "";
+            color: var(--accent-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.4rem;
+        }
+        
+        .experience-item {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .experience-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .company {
+            font-weight: 600;
+            color: var(--accent-color);
+            font-size: 1.3rem;
+        }
+        
+        .duration {
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-left: 10px;
+        }
+        
+        /* Skills Section */
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .skill-category {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        }
+        
+        .skill-category h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .skill-category h3::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-color);
+            border-radius: 50%;
+        }
+        
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .skill-tag {
+            background: rgba(255, 165, 0, 0.15);
+            color: var(--accent-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        /* AI Assistant Section */
+        .ai-section {
+            text-align: center;
+            background: linear-gradient(135deg, var(--section-bg) 0%, #0d0d0d 100%);
+        }
+        
+        .ai-container {
+            max-width: 700px;
             margin: 0 auto;
             padding: 20px;
         }
-        header {
-            text-align: center; /* Only header is centered */
-            padding: 50px 20px;
-            background-color: #1A1A1A;
+        
+        .ai-description {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--text-secondary);
         }
-        h1 {
-            font-size: 3em;
-            color: #FFA500; /* Changed to orange */
-            margin: 0;
+        
+        .ai-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
         }
-        p, ul {
-            color: #B2B2B2;
-            font-size: 0.9em;
-            text-align: justify; /* Justified text */
-        }
-        a {
-            color: #FFA500; /* Changed to orange */
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        section {
-            padding: 40px 20px;
-            border-bottom: 1px solid #333;
-        }
-        h2 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #FFFFFF;
-            border-bottom: 2px solid #FFA500; /* Changed to orange */
-            display: inline-block;
-            padding-bottom: 5px;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        ul li {
-            padding: 10px 0;
-            font-size: 1.1em;
-            color: #E6E6E6;
-        }
-        .skills ul {
-            list-style-type: disc;
-            padding-left: 20px;
-        }
-        iframe {
+        
+        .ai-button {
+            background: linear-gradient(45deg, var(--accent-color), #FF8C00);
+            color: #000;
             border: none;
-            border-radius: 0;
-            background-color: #111;
-            width: 100%;
+            padding: 16px 45px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
+        
+        .ai-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00, #FF6347);
+            z-index: -1;
+            transition: opacity 0.4s ease;
+            opacity: 0;
+        }
+        
+        .ai-button:hover::before {
+            opacity: 1;
+        }
+        
+        .ai-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.6);
+        }
+        
+        .ai-button:active {
+            transform: translateY(1px);
+        }
+        
+        /* LinkedIn Badge Section */
+        .linkedin-section {
+            text-align: center;
+            padding: 50px 0;
+            background-color: var(--section-bg);
+        }
+        
+        .badge-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 25px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.35);
+        }
+        
+        /* Footer Styles */
         footer {
             text-align: center;
-            padding: 20px;
-            background-color: #1A1A1A;
-            color: #777;
+            padding: 30px 0;
+            background-color: var(--footer-bg);
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            border-top: 1px solid var(--border-color);
         }
-        footer p {
-            margin: 0;
+        
+        .copyright {
+            margin-top: 8px;
+            font-size: 0.95rem;
+            opacity: 0.8;
         }
-        .experience ul {
-            list-style-type: none;
-            padding-left: 0;
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .contact-info, .contact-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            section {
+                padding: 45px 0;
+            }
+            
+            h2 {
+                font-size: 2.1rem;
+            }
+            
+            h3 {
+                font-size: 1.55rem;
+            }
+            
+            .skills-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-button {
+                width: 100%;
+                justify-content: center;
+                padding: 15px;
+            }
         }
-        .experience li::before {
-            content: "- "; /* Dash before each bullet point */
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.6rem;
+            }
+            
+            .subtitle {
+                font-size: 1.15rem;
+            }
+            
+            .contact-info p, .contact-links a {
+                font-size: 0.95rem;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            section {
+                padding: 35px 0;
+            }
+            
+            h2 {
+                font-size: 1.9rem;
+            }
+            
+            h3 {
+                font-size: 1.4rem;
+            }
+            
+            ul li {
+                font-size: 0.95rem;
+                padding-left: 18px;
+            }
+            
+            .experience-item {
+                padding: 20px;
+            }
         }
+        
+        /* Animation for section entrance */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        section {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        section:nth-of-type(1) { animation-delay: 0.1s; opacity: 1; }
+        section:nth-of-type(2) { animation-delay: 0.2s; }
+        section:nth-of-type(3) { animation-delay: 0.3s; }
+        section:nth-of-type(4) { animation-delay: 0.4s; }
+        section:nth-of-type(5) { animation-delay: 0.5s; }
+        section:nth-of-type(6) { animation-delay: 0.6s; }
+        section:nth-of-type(7) { animation-delay: 0.7s; }
+        section:nth-of-type(8) { animation-delay: 0.8s; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <header>
-            <h1>Ahmed Bagy</h1>
-            <p style="text-align: center;">Zahraa El-Maadi, Cairo, Egypt | Tele: 01120596522 | WhatsApp: 01229445692</p>
-            <p style="text-align: center;">Email: <a href="mailto:ahmedbagy@gmail.com">ahmedbagy@gmail.com</a> | <a href="https://www.datacamp.com/portfolio/ahmedbagy" target="_blank">DataCamp</a> | <a href="https://github.com/AhmedBagy" target="_blank">GitHub</a> | <a href="https://www.linkedin.com/in/ahmedbagy" target="_blank">LinkedIn</a></p>
+            <div class="header-content">
+                <h1>Ahmed Bagy, MSc</h1>
+                <div class="subtitle">Business & Data Analyst | Media Operations Specialist | MSc in Geophysics | Seismic Interpretation & Modeling Expert</div>
+                <div class="contact-info">
+                    <p> Cairo, Egypt</p>
+                    <p> +201120596522</p>
+                    <p> WhatsApp: +201229445692</p>
+                    <p> ahmedbagy@gmail.com</p>
+                </div>
+                <div class="contact-links">
+                    <a href="https://linkedin.com/in/ahmedbagy" target="_blank">LinkedIn Profile</a>
+                    <a href="https://www.datacamp.com/portfolio/ahmedbagy" target="_blank">DataCamp Profile</a>
+                    <a href="https://github.com/AhmedBagy" target="_blank">Projects</a>
+                    <a href="https://api.whatsapp.com/send?phone=201229445692" target="_blank">WhatsApp me</a>
+                    <a href="mailto:ahmedbagy@gmail.com">Email Me</a>
+                </div>
+            </div>
         </header>
+        
         <section id="summary">
-            <h2>Summary</h2>
-            <p>I am a seasoned Data Analyst with extensive experience in automating processes, data visualization, and machine learning. At Pixelogic Media, I introduced ML and developed numerous tools and reporting dashboards. My background in Geophysics and certifications in SQL, Python, and ML highlight my technical expertise and dedication to continuous learning. Fluent in Arabic, proficient in US English, and fairly proficient in Français. Military service completed in March 2020, born in September 1995, graduated in May 2018, and pursuing a master's degree.</p>
+            <h2>Professional Summary</h2>
+            <p>At Pixelogic Media, I contribute to data-driven media operations by leveraging SQL, Python, and automation to optimize workflows, develop ETL pipelines, and create interactive dashboards that deliver actionable insights. In my role as a Media Operator, I manage post-production processes and ensure seamless delivery of digital assets across platforms, while automating repetitive tasks to enhance efficiency and accuracy.</p>
+            <p>Holding an MSc in Geophysics from Helwan University, with research in 3D seismic interpretation and reservoir characterization using tools like Petrel and Hampson-Russell, I combine technical problem-solving with media expertise, applying my analytical foundation to maintain high-quality standards and drive innovative solutions in both media operations and data analysis.</p>
         </section>
-
-        <section>
+        
+        <section id="experience">
             <h2>Work Experience</h2>
-        
-            <h3>Data Analyst | Media Operator II @ <a href="https://pixelogicmedia.com/">Pixelogic Media</a>  <span>(Jan 2024 - Currently)</span></h3>
-            <p>
-                - Introduced ML and NN for fresh client solutions.<br>
-                - Automated processes improving operational efficiency.<br>
-                - Developed Metabase dashboards using SQL, Python, and Postman.<br>
-                - Created batch script tools for enhanced department technology.
-            </p>
-        
-            <h3>Media Operator @ <a href="https://pixelogicmedia.com/">Pixelogic Media</a>  <span>(July 2022 - Dec 2023)</span></h3>
-            <p>
-                - Gained valuable experience with QuickBase and OM.<br>
-                - Analyzed data using SQL, Python, and Excel.<br>
-                - Improved data visualization with Metabase for team insights.
-            </p> 
-         
-            <h3>Video Editor @ <a href="https://ok-adv.com/Media/">Ok Media Solutions</a> <span>(Nov 2020 - June 2022)</span></h3>
-            <p>
-                - Managed raw footage, special effects, and motion graphics.<br>
-                - Delivered client satisfaction through a customer-centered approach.<br>
-                - Provided account management with excellent communication skills.
-            </p>
-            <h3>Freelance Video Editor @ <a href="https://linktr.ee/AhmedBagy">Online Platforms</a> <span>(Nov 2018 - June 2020)</span></h3>
-            <p>
-                - Produced video content with strong storytelling techniques.<br>
-                - Ensured continuity and seamless special effects in video projects.
-            </p>
-        </section>
-        
-        <section>
-            <h2>Skills</h2>
-            <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-                <ul style="list-style-type: disc; padding-left: 20px; width: 45%;">
-                    <li>Analyzing/Reporting skills</li>
-                    <li>Presentation skills</li>
-                    <li>Creative Thinking / Problem Solving</li>
-                    <li>Adaptability / Continuous Learning</li>
-                    <li>Communication skills</li>
-                    <li>Adobe: AE, Au, Me, Pr, Ai, Ps</li>
+            
+            <div class="experience-item">
+                <h3>Data Analyst <span class="duration">(June 2023 - Present)</span></h3>
+                <div class="company">Pixelogic Media</div>
+                <ul>
+                    <li>Developed automated reporting pipelines ensuring 99% SLA compliance and consistent data delivery.</li>
+                    <li>Built 10+ KPI-driven Metabase dashboards, delivering real-time insights and improving decision-making efficiency by 35%.</li>
+                    <li>Designed continuous reporting frameworks with automated alerts, cutting response time to performance issues by 50%.</li>
+                    <li>Presented monthly analytical reports to management, driving data-backed actions across departments.</li>
+                    <li>Automated key workflows, improving reporting accuracy by 40% and reducing turnaround time by 60%.</li>
                 </ul>
-                <ul style="list-style-type: disc; padding-left: 20px; width: 45%;">
-                    <li>IT background (Hardware/Software)</li>
-                    <li>Programming: Python, SQL, Batch, API & JSON, HTML+CSS</li>
-                    <li>AI: Machine Learning (ML)</li>
-                    <li>IDEs: Jupyter Notebook, Anaconda, Visual Studio, CMD terminal</li>
-                    <li>Microsoft Office: Excel, PowerPoint, Word</li>
+            </div>
+            
+            <div class="experience-item">
+                <h3>Media Operator II <span class="duration">(June 2023 - Present)</span></h3>
+                <div class="company">Pixelogic Media</div>
+                <ul>
+                    <li>Utilized transferring tools for large-scale asset delivery, ensuring secured transfers.</li>
+                    <li>Performed spot checks, creating proxies, and staging and ingesting assets into various systems.</li>
+                    <li>Being highly skilled in media operations enabled me to deliver effective training for newcomers and provide clear orientation to customers, which contributed effectively to the workflows.</li>
+                </ul>
+            </div>
+            
+            <div class="experience-item">
+                <h3>Researcher <span class="duration">(Sept. 2019 – July 2025)</span></h3>
+                <div class="company">Helwan University</div>
+                <ul>
+                    <li>MSc in Geophysics completed in July 2025.</li>
+                    <li>Conducted research on the West Delta Deep Marine (WDDM) Simian Field, introducing 3D seismic interpretation to the area.</li>
+                    <li>Highlighted hazardous subsurface zones to avoid during drilling operations, enhancing safety measures.</li>
+                    <li>Applied Amplitude Versus Offset (AVO) analysis to indicate oil and gas presence, contributing to exploration insights.</li>
+                    <li>Utilized Petrel for 3D modeling and seismic attribute integration, enabling advanced subsurface visualization.</li>
+                    <li>Applied Hampson-Russell workflows for quantitative interpretation and reservoir characterization.</li>
+                    <li>Delivered academic presentations that leveraged storytelling and visualization, strengthening research impact and communication.</li>
+                </ul>
+            </div>
+            
+            <div class="experience-item">
+                <h3>Media Operator <span class="duration">(July 2022 - Dec 2023)</span></h3>
+                <div class="company">Pixelogic Media</div>
+                <ul>
+                    <li>Managed complex data handling systems using QuickBase and OpenMedia, optimizing operational pipelines and metadata quality.</li>
+                    <li>Processed and validated high-volume digital assets using Faspex and checksum verification tools, maintaining accuracy and consistency.</li>
+                    <li>Used SQL and Python to conduct data cleaning and reconciliation, achieving a 99.9% increase in reporting accuracy.</li>
+                    <li>Enhanced data visualization for internal stakeholders using Metabase, improving cross-functional team insights.</li>
+                </ul>
+            </div>
+            
+            <div class="experience-item">
+                <h3>Account Manager <span class="duration">(Mar 2021 - June 2022)</span></h3>
+                <div class="company">Ok Media Solutions</div>
+                <ul>
+                    <li>Managed 10–15 client accounts, ensuring satisfaction through clear communication and strategic support.</li>
+                    <li>Led a team of 7 operators, tracking volume and capacity to optimize workflow.</li>
+                    <li>Reduced revisions by improving user experience and aligning creative output with client needs.</li>
+                </ul>
+            </div>
+            
+            <div class="experience-item">
+                <h3>Video Editor <span class="duration">(Nov 2020 - Mar 2021)</span></h3>
+                <div class="company">Ok Media Solutions</div>
+                <ul>
+                    <li>Led post-production for digital media, integrating client feedback with narrative continuity.</li>
+                    <li>Collaborated with clients to define needs, applying strong communication skills to achieve optimal results.</li>
+                </ul>
+            </div>
+            
+            <div class="experience-item">
+                <h3>Freelance Video Editor <span class="duration">(May 2018 - Nov 2020)</span></h3>
+                <div class="company">Online Platforms</div>
+                <ul>
+                    <li>Delivered customized visual content for online brands with a focus on editing workflows and client satisfaction.</li>
+                </ul>
+            </div>
+            
+            <div class="experience-item">
+                <h3>Medical Sales Representative <span class="duration">(April 2020 - Nov 2020)</span></h3>
+                <div class="company">Polypharm</div>
+                <ul>
+                    <li>Promoted and sold medical products to healthcare professionals, explaining product benefits and usage.</li>
+                    <li>Maintained relationships with doctors and pharmacists to increase market reach and ensure customer satisfaction.</li>
+                    <li>Developed strong communication and persuasion skills, contributing to effective territory coverage and sales growth.</li>
+                    <li>Managed product inventory and coordinated with the supply chain to fulfill orders on time.</li>
                 </ul>
             </div>
         </section>
         
-        <section>
-            <h2>Education</h2>
-        
-            <h3>Master’s degree in Geophysics</h3>
-        
-            <h3>Certified Pre-Master Studies in Geophysics [B+] <span>(May 2019)</span></h3>
-        
-            <h3>Faculty of Science, Helwan University <span>(May 2018)</span></h3>
-            <p>
-                - B.Sc. degree in Geophysics with a very good grade.
-            </p>
-        
-            <h3>Graduated from Hadayek El-Maadi Experimental Language School</h3>
+        <section id="skills">
+            <h2>Technical Skills</h2>
+            <div class="skills-container">
+                <div class="skill-category">
+                    <h3>Programming & Languages</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">SQL</span>
+                        <span class="skill-tag">Batch Script</span>
+                        <span class="skill-tag">HTML</span>
+                        <span class="skill-tag">CSS</span>
+                        <span class="skill-tag">API Integration</span>
+                        <span class="skill-tag">JSON</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Data Tools & ETL</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Pandas</span>
+                        <span class="skill-tag">Jupyter</span>
+                        <span class="skill-tag">Metabase</span>
+                        <span class="skill-tag">QuickBase</span>
+                        <span class="skill-tag">Bash Scripting</span>
+                        <span class="skill-tag">ETL Pipelines</span>
+                        <span class="skill-tag">Power BI</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Media & Geophysics</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Petrel</span>
+                        <span class="skill-tag">Hampson-Russell</span>
+                        <span class="skill-tag">Adobe Suite</span>
+                        <span class="skill-tag">Faspex</span>
+                        <span class="skill-tag">OpenMedia</span>
+                        <span class="skill-tag">3D Seismic Interpretation</span>
+                        <span class="skill-tag">Reservoir Characterization</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Professional Skills</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Data Analysis</span>
+                        <span class="skill-tag">Workflow Automation</span>
+                        <span class="skill-tag">Problem Solving</span>
+                        <span class="skill-tag">Analytical Thinking</span>
+                        <span class="skill-tag">Communication</span>
+                        <span class="skill-tag">Presentation Skills</span>
+                        <span class="skill-tag">Team Leadership</span>
+                    </div>
+                </div>
+            </div>
         </section>
         
-        <section id="ai-search">
-            <h2>Engage with My AI Brainchild</h2>
-            <p>Looking for insights? Start a conversation with my AI assistant, designed to provide fast answers and help you explore data insights, tech discussions, and more!</p>
+        <section id="education">
+            <h2>Education</h2>
             
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <img src="PP.png" alt="Ahmed Bagy" style="width: 100px; height: auto; border-radius: 50%; margin-right: 20px;"> <!-- Profile photo -->
-                <a href="https://real-chat-me.vercel.app/" target="_blank" style="background-color: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px; text-decoration: none; color: #000;">Talk to My AI Assistant</a>
+            <div class="experience-item">
+                <h3>Master's Degree in Geophysics</h3>
+                <div class="company">Helwan University</div>
+                <p class="duration">Completed July 2025</p>
+            </div>
+            
+            <div class="experience-item">
+                <h3>Certified Pre-Master Studies in Geophysics [B+]</h3>
+                <div class="company">Helwan University</div>
+                <p class="duration">May 2019</p>
+            </div>
+            
+            <div class="experience-item">
+                <h3>B.Sc. Degree in Geophysics</h3>
+                <div class="company">Faculty of Science, Helwan University</div>
+                <p class="duration">May 2018</p>
+                <p>Graduated with a very good grade</p>
+            </div>
+            
+            <div class="experience-item">
+                <h3>High School Diploma</h3>
+                <div class="company">Hadayek El-Maadi Experimental Language School</div>
             </div>
         </section>
         
         <section id="certifications">
             <h2>Certifications</h2>
-            <ul>
-                <li>- Data Analysis Track</li>
-                <li>- Python & ML Track</li>
-                <li>- BC English Course B2 Level</li>
-            </ul>
-        </section>
-
-        <!-- LinkedIn Public Profile Badge -->
-        <section id="linkedin-badge" style="text-align: center; padding: 40px 20px;">
-            <h2>Connect with Me</h2>
-            <div class="badge-base LI-profile-badge" 
-                 data-locale="en_US" 
-                 data-size="medium" 
-                 data-theme="dark" 
-                 data-type="HORIZONTAL" 
-                 data-vanity="ahmedbagy" 
-                 data-version="v1">
+            <div class="experience-item">
+                <ul>
+                    <li>Certified Data Analyst @ Datacamp</li>
+                    <li>English Course @ British Council</li>
+                    <li>AI Fundamentals Certification</li>
+                </ul>
             </div>
         </section>
-
+        
+        <section id="ai-search" class="ai-section">
+            <div class="ai-container">
+                <h2>Engage with My AI Brainchild</h2>
+                <p class="ai-description">Looking for insights? Start a conversation with my AI assistant, designed to provide fast answers and help you explore data insights, tech discussions, and more!</p>
+                <div class="ai-button-container">
+                    <a href="https://real-chat-me.vercel.app/" target="_blank" class="ai-button">
+                        <span>Talk to My AI Assistant</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="linkedin-badge" class="linkedin-section">
+            <h2>Connect with Me</h2>
+            <div class="badge-container">
+                <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="dark" data-type="HORIZONTAL" data-vanity="ahmedbagy" data-version="v1"></div>
+            </div>
+        </section>
+        
         <footer>
-            <p>&copy; 2025 Ahmed Bagy - Data Analyst & Software Developer</p>
+            <p>Ahmed Bagy, MSc - Business & Data Analyst | Media Operations Specialist</p>
+            <p class="copyright">&copy; 2026 Ahmed Bagy. All rights reserved.</p>
         </footer>
     </div>
-
-    <!-- LinkedIn badge script -->
+    
+    <!-- LinkedIn Badge Script -->
     <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
     
+    <script>
+        // Simple animation for sections when scrolling
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section');
+            
+            // Make all sections visible on load for the animation
+            sections.forEach(section => {
+                section.style.opacity = 1;
+            });
+            
+            // Add smooth scrolling to all links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Add hover effect to experience items
+            const experienceItems = document.querySelectorAll('.experience-item');
+            experienceItems.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    item.style.transform = 'translateY(-5px)';
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
