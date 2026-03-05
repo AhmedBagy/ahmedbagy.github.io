@@ -590,13 +590,14 @@
         if (user && user.email === ADMIN_EMAIL) {
             setAdminState(true, user);
             showSignedInUI(user);
+            closeAuthModal();closeAuthModal();
         } else {
             if (user) {
                 // Someone signed in with the wrong Google account
                 auth.signOut();
                 showAuthError('That Google account is not authorised. Please use the admin account.');
             }
-            setAdminState(false, null);
+            setAdminState(false);
             showSignedOutUI();
         }
     });
@@ -685,7 +686,7 @@
     function setAdminState(active, user) {
         isAdmin = active;
         document.getElementById('adminDot').classList.toggle('active', active);
-        document.getElementById('adminLabel').textContent = active
+        document.getElementById('adminLabel').textContent = (active && user)
             ? 'Admin: ' + ((user.displayName || user.email).split(' ')[0])
             : 'Public View';
         renderProjects(cachedProjects);
