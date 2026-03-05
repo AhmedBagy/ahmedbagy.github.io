@@ -161,8 +161,8 @@
         .admin-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border-color); transition: background 0.3s; }
         .admin-dot.active { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
         .admin-label { color: var(--text-secondary); }
-
-        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 30px; }
+        
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 30px; margin-top: 20px; }
         .project-card { background: var(--card-bg); border-radius: 16px; padding: 30px; border: 1px solid var(--border-color); transition: all 0.3s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 14px; }
         .project-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--gradient-2); }
         .project-card:hover { transform: translateY(-5px); border-color: var(--accent-cyan); box-shadow: 0 10px 40px rgba(0,217,255,0.15); }
