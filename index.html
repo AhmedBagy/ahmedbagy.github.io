@@ -953,14 +953,14 @@
                     <p>Cairo, Egypt</p>
                     <p>+201120596522</p>
                     <p>WhatsApp: +201229445692</p>
-                    <p>ahmedbagy@gmail.com</p>
+                    <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3051585d55545251574970575d51595c1e535f5d">[email&#160;protected]</a></p>
                 </div>
                 <div class="contact-links">
                     <a href="https://linkedin.com/in/ahmedbagy" target="_blank">LinkedIn</a>
                     <a href="https://www.datacamp.com/portfolio/ahmedbagy" target="_blank">DataCamp</a>
                     <a href="https://github.com/AhmedBagy" target="_blank">GitHub</a>
                     <a href="https://api.whatsapp.com/send?phone=201229445692" target="_blank">WhatsApp</a>
-                    <a href="mailto:ahmedbagy@gmail.com">Email</a>
+                    <a href="/cdn-cgi/l/email-protection#d8b9b0b5bdbcbab9bfa198bfb5b9b1b4f6bbb7b5">Email</a>
                 </div>
             </div>
         </header>
@@ -1397,131 +1397,106 @@
     <!-- LinkedIn Badge -->
     <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
 
+    <!-- Firebase SDKs (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <script>
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  ADMIN AUTH  — SHA-256 of your passphrase
-    //  To change your password:
-    //    1. Open browser console
-    //    2. Run: crypto.subtle.digest('SHA-256', new TextEncoder().encode('YOUR_NEW_PASS'))
-    //            .then(b => console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
-    //    3. Replace ADMIN_HASH below with the result
+    //  FIREBASE CONFIG
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const firebaseConfig = {
+        apiKey: 'AIzaSyDED8MOS9DQbmeENcliTUsbVQMEY7MhM-I',
+        authDomain: 'first-fdead.firebaseapp.com',
+        projectId: 'first-fdead',
+        storageBucket: 'first-fdead.firebasestorage.app',
+        messagingSenderId: '439058830455',
+        appId: '1:439058830455:web:9806ca34b17fccffc92272',
+        measurementId: 'G-8HCS8LVPY5'
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const projectsCol = db.collection('projects');
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    //  ADMIN AUTH — SHA-256 passphrase gate
+    //  To change password: run in console:
+    //  crypto.subtle.digest('SHA-256', new TextEncoder().encode('NEW_PASS'))
+    //    .then(b => console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
+    //  Then replace ADMIN_HASH below.
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     const ADMIN_HASH = '217a5adedd9e8a0ea7393e8582115649b63cdd3c67c25dd146285a02020c3b2a';
-    // ^ Default passphrase is: ahmedbagy2026  (CHANGE THIS)
+    // Default passphrase: ahmedbagy2026
 
     let isAdmin = false;
     let editingId = null;
+    let cachedProjects = [];
 
-    // ── Project Storage ──────────────────────────────
-    function loadProjects() {
-        try {
-            return JSON.parse(localStorage.getItem('ab_projects') || '[]');
-        } catch { return []; }
-    }
-
-    function saveProjects(arr) {
-        localStorage.setItem('ab_projects', JSON.stringify(arr));
-    }
-
-    // ── SHA-256 helper ───────────────────────────────
     async function sha256(message) {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(message));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    function escHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     // ── Render Projects ──────────────────────────────
-    function renderProjects() {
+    function renderProjects(projects) {
+        cachedProjects = projects;
         const grid = document.getElementById('projectsGrid');
-        const projects = loadProjects();
         grid.innerHTML = '';
 
         if (projects.length === 0 && !isAdmin) {
-            grid.innerHTML = `<div class="projects-empty"><p>No projects added yet. Check back soon.</p></div>`;
+            grid.innerHTML = '<div class="projects-empty"><p>No projects added yet. Check back soon.</p></div>';
             return;
         }
 
         projects.forEach(proj => {
             const card = document.createElement('div');
             card.className = 'project-card';
-            card.dataset.id = proj.id;
-
-            const tagsHtml = (proj.tags || [])
-                .map(t => `<span class="project-tag">${escHtml(t.trim())}</span>`)
-                .join('');
-
-            const linkHtml = proj.link
-                ? `<a class="project-link" href="${escHtml(proj.link)}" target="_blank" rel="noopener">View Project &#8594;</a>`
-                : '';
-
-            const adminHtml = isAdmin
-                ? `<div class="project-admin-actions visible">
-                       <button class="btn-edit" onclick="openEditModal('${proj.id}')">Edit</button>
-                       <button class="btn-delete" onclick="deleteProject('${proj.id}')">Delete</button>
-                   </div>`
-                : '';
-
-            card.innerHTML = `
-                <div class="project-title">${escHtml(proj.title)}</div>
-                <p class="project-desc">${escHtml(proj.desc)}</p>
-                ${tagsHtml ? `<div class="project-tags">${tagsHtml}</div>` : ''}
-                ${linkHtml}
-                ${adminHtml}
-            `;
+            const tagsHtml = (proj.tags||[]).map(t=>'<span class="project-tag">'+escHtml(t.trim())+'</span>').join('');
+            const linkHtml = proj.link ? '<a class="project-link" href="'+escHtml(proj.link)+'" target="_blank" rel="noopener">View Project &#8594;</a>' : '';
+            const adminHtml = isAdmin ? '<div class="project-admin-actions visible"><button class="btn-edit" onclick="openEditModal(\''+proj.id+'\')">Edit</button><button class="btn-delete" onclick="deleteProject(\''+proj.id+'\')">Delete</button></div>' : '';
+            card.innerHTML = '<div class="project-title">'+escHtml(proj.title)+'</div><p class="project-desc">'+escHtml(proj.desc)+'</p>'+(tagsHtml?'<div class="project-tags">'+tagsHtml+'</div>':'')+linkHtml+adminHtml;
             grid.appendChild(card);
         });
 
-        // Add "+" card for admin
         if (isAdmin) {
             const addCard = document.createElement('button');
             addCard.className = 'add-project-btn';
-            addCard.innerHTML = `<span class="plus-icon">+</span><span>Add New Project</span>`;
+            addCard.innerHTML = '<span class="plus-icon">+</span><span>Add New Project</span>';
             addCard.addEventListener('click', openAddModal);
             grid.appendChild(addCard);
         }
     }
 
-    function escHtml(str) {
-        return String(str)
-            .replace(/&/g,'&amp;')
-            .replace(/</g,'&lt;')
-            .replace(/>/g,'&gt;')
-            .replace(/"/g,'&quot;');
+    // ── Firestore real-time listener ─────────────────
+    function listenProjects() {
+        document.getElementById('projectsGrid').innerHTML = '<div class="projects-empty"><p>Loading projects...</p></div>';
+        projectsCol.orderBy('created','asc').onSnapshot(snapshot => {
+            renderProjects(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        }, err => {
+            console.error('Firestore:', err);
+            document.getElementById('projectsGrid').innerHTML = '<div class="projects-empty"><p>Could not load projects.</p></div>';
+        });
     }
 
     // ── Admin State ──────────────────────────────────
     function setAdminState(active) {
         isAdmin = active;
-        const dot = document.getElementById('adminDot');
-        const label = document.getElementById('adminLabel');
-        if (active) {
-            dot.classList.add('active');
-            label.textContent = 'Admin Mode';
-        } else {
-            dot.classList.remove('active');
-            label.textContent = 'Public View';
-        }
-        renderProjects();
+        document.getElementById('adminDot').classList.toggle('active', active);
+        document.getElementById('adminLabel').textContent = active ? 'Admin Mode' : 'Public View';
+        renderProjects(cachedProjects);
     }
 
-    // ── Logo triple-click triggers auth ─────────────
-    let logoClickCount = 0;
-    let logoClickTimer = null;
-
+    // ── Logo triple-click ────────────────────────────
+    let logoClicks = 0, logoTimer = null;
     document.getElementById('navLogo').addEventListener('click', () => {
-        logoClickCount++;
-        clearTimeout(logoClickTimer);
-        logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 600);
-
-        if (logoClickCount >= 3) {
-            logoClickCount = 0;
-            if (isAdmin) {
-                setAdminState(false);
-            } else {
-                openAuthModal();
-            }
-        }
+        logoClicks++;
+        clearTimeout(logoTimer);
+        logoTimer = setTimeout(() => { logoClicks = 0; }, 600);
+        if (logoClicks >= 3) { logoClicks = 0; isAdmin ? setAdminState(false) : openAuthModal(); }
     });
 
     // ── Auth Modal ───────────────────────────────────
@@ -1531,206 +1506,93 @@
         document.getElementById('authModal').classList.add('open');
         setTimeout(() => document.getElementById('authInput').focus(), 100);
     }
-
-    function closeAuthModal() {
-        document.getElementById('authModal').classList.remove('open');
-    }
-
+    function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
     async function attemptAuth() {
         const pass = document.getElementById('authInput').value;
         if (!pass) return;
-        const hash = await sha256(pass);
-        if (hash === ADMIN_HASH) {
-            closeAuthModal();
-            setAdminState(true);
-        } else {
-            document.getElementById('authError').style.display = 'block';
-            document.getElementById('authInput').value = '';
-            document.getElementById('authInput').focus();
-        }
+        if (await sha256(pass) === ADMIN_HASH) { closeAuthModal(); setAdminState(true); }
+        else { document.getElementById('authError').style.display='block'; document.getElementById('authInput').value=''; document.getElementById('authInput').focus(); }
     }
-
     document.getElementById('authClose').addEventListener('click', closeAuthModal);
     document.getElementById('authCancelBtn').addEventListener('click', closeAuthModal);
     document.getElementById('authConfirmBtn').addEventListener('click', attemptAuth);
-    document.getElementById('authInput').addEventListener('keydown', e => {
-        if (e.key === 'Enter') attemptAuth();
-    });
-
-    // Close modal on overlay click
-    document.getElementById('authModal').addEventListener('click', e => {
-        if (e.target === document.getElementById('authModal')) closeAuthModal();
-    });
+    document.getElementById('authInput').addEventListener('keydown', e => { if(e.key==='Enter') attemptAuth(); });
+    document.getElementById('authModal').addEventListener('click', e => { if(e.target===document.getElementById('authModal')) closeAuthModal(); });
 
     // ── Project Modal ────────────────────────────────
     function openAddModal() {
         editingId = null;
         document.getElementById('projectModalTitle').textContent = 'Add Project';
-        document.getElementById('projTitle').value = '';
-        document.getElementById('projDesc').value = '';
-        document.getElementById('projTags').value = '';
-        document.getElementById('projLink').value = '';
+        ['projTitle','projDesc','projTags','projLink'].forEach(id => document.getElementById(id).value = '');
         document.getElementById('projectModal').classList.add('open');
         setTimeout(() => document.getElementById('projTitle').focus(), 100);
     }
-
     function openEditModal(id) {
-        const projects = loadProjects();
-        const proj = projects.find(p => p.id === id);
+        const proj = cachedProjects.find(p => p.id === id);
         if (!proj) return;
         editingId = id;
         document.getElementById('projectModalTitle').textContent = 'Edit Project';
         document.getElementById('projTitle').value = proj.title;
         document.getElementById('projDesc').value = proj.desc;
-        document.getElementById('projTags').value = (proj.tags || []).join(', ');
+        document.getElementById('projTags').value = (proj.tags||[]).join(', ');
         document.getElementById('projLink').value = proj.link || '';
         document.getElementById('projectModal').classList.add('open');
         setTimeout(() => document.getElementById('projTitle').focus(), 100);
     }
-
-    function closeProjectModal() {
-        document.getElementById('projectModal').classList.remove('open');
-        editingId = null;
-    }
-
-    function saveProject() {
+    function closeProjectModal() { document.getElementById('projectModal').classList.remove('open'); editingId = null; }
+    async function saveProject() {
         const title = document.getElementById('projTitle').value.trim();
-        const desc = document.getElementById('projDesc').value.trim();
-        const tagsRaw = document.getElementById('projTags').value.trim();
-        const link = document.getElementById('projLink').value.trim();
-
-        if (!title || !desc) {
-            alert('Title and Description are required.');
-            return;
-        }
-
-        const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
-        const projects = loadProjects();
-
-        if (editingId) {
-            const idx = projects.findIndex(p => p.id === editingId);
-            if (idx !== -1) {
-                projects[idx] = { ...projects[idx], title, desc, tags, link };
-            }
-        } else {
-            projects.push({
-                id: 'proj_' + Date.now(),
-                title, desc, tags, link,
-                created: new Date().toISOString()
-            });
-        }
-
-        saveProjects(projects);
-        closeProjectModal();
-        renderProjects();
+        const desc  = document.getElementById('projDesc').value.trim();
+        const tags  = document.getElementById('projTags').value.trim().split(',').map(t=>t.trim()).filter(Boolean);
+        const link  = document.getElementById('projLink').value.trim();
+        if (!title || !desc) { alert('Title and Description are required.'); return; }
+        const btn = document.getElementById('projectSaveBtn');
+        btn.textContent = 'Saving...'; btn.disabled = true;
+        try {
+            if (editingId) { await projectsCol.doc(editingId).update({ title, desc, tags, link }); }
+            else { await projectsCol.add({ title, desc, tags, link, created: firebase.firestore.FieldValue.serverTimestamp() }); }
+            closeProjectModal();
+        } catch(err) { alert('Error: ' + err.message); }
+        finally { btn.textContent = 'Save Project'; btn.disabled = false; }
     }
-
-    function deleteProject(id) {
+    async function deleteProject(id) {
         if (!confirm('Delete this project?')) return;
-        const projects = loadProjects().filter(p => p.id !== id);
-        saveProjects(projects);
-        renderProjects();
+        try { await projectsCol.doc(id).delete(); } catch(err) { alert('Error: ' + err.message); }
     }
-
     document.getElementById('projectClose').addEventListener('click', closeProjectModal);
     document.getElementById('projectCancelBtn').addEventListener('click', closeProjectModal);
     document.getElementById('projectSaveBtn').addEventListener('click', saveProject);
-    document.getElementById('projectModal').addEventListener('click', e => {
-        if (e.target === document.getElementById('projectModal')) closeProjectModal();
-    });
+    document.getElementById('projectModal').addEventListener('click', e => { if(e.target===document.getElementById('projectModal')) closeProjectModal(); });
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  CHARTS & ANIMATIONS
+    //  CHARTS & PAGE INIT
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     document.addEventListener('DOMContentLoaded', function () {
-
-        // Animate progress bars
         setTimeout(() => {
-            document.querySelectorAll('.progress-bar-fill').forEach(bar => {
-                bar.style.width = bar.getAttribute('data-width') + '%';
-            });
+            document.querySelectorAll('.progress-bar-fill').forEach(bar => { bar.style.width = bar.getAttribute('data-width') + '%'; });
         }, 300);
 
-        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) target.scrollIntoView({ behavior: 'smooth' });
+                const t = document.querySelector(this.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth' });
             });
         });
 
-        // Red Bull Wingfinder Radar
-        const wingfinderCtx = document.getElementById('wingfinderRadar').getContext('2d');
-        new Chart(wingfinderCtx, {
+        new Chart(document.getElementById('wingfinderRadar').getContext('2d'), {
             type: 'radar',
-            data: {
-                labels: ['Connections', 'Creativity', 'Drive', 'Thinking'],
-                datasets: [{
-                    label: 'My Profile',
-                    data: [78, 82, 55, 90],
-                    fill: true,
-                    backgroundColor: 'rgba(255, 107, 53, 0.2)',
-                    borderColor: '#ff6b35',
-                    pointBackgroundColor: '#ff6b35',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#ff6b35',
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                scales: {
-                    r: {
-                        min: 0, max: 100, beginAtZero: true,
-                        ticks: { stepSize: 20, color: '#a8a8c0', backdropColor: 'transparent' },
-                        grid: { color: '#2a2a3f' },
-                        pointLabels: { color: '#e8e8f0', font: { size: 14, weight: '600' } }
-                    }
-                },
-                plugins: { legend: { display: false } }
-            }
+            data: { labels: ['Connections','Creativity','Drive','Thinking'], datasets: [{ label:'My Profile', data:[78,82,55,90], fill:true, backgroundColor:'rgba(255,107,53,0.2)', borderColor:'#ff6b35', pointBackgroundColor:'#ff6b35', pointBorderColor:'#fff', pointHoverBackgroundColor:'#fff', pointHoverBorderColor:'#ff6b35', pointRadius:6, pointHoverRadius:8, borderWidth:3 }] },
+            options: { scales: { r: { min:0, max:100, beginAtZero:true, ticks:{stepSize:20,color:'#a8a8c0',backdropColor:'transparent'}, grid:{color:'#2a2a3f'}, pointLabels:{color:'#e8e8f0',font:{size:14,weight:'600'}} } }, plugins:{legend:{display:false}} }
         });
 
-        // Coca-Cola Competencies
-        const cokeCtx = document.getElementById('cokeCompetencies').getContext('2d');
-        new Chart(cokeCtx, {
+        new Chart(document.getElementById('cokeCompetencies').getContext('2d'), {
             type: 'bar',
-            data: {
-                labels: ['Impact', 'Growth Mindset', 'Customer First', 'Make it Simple', 'We Over I', 'Deliver Sustainably'],
-                datasets: [{
-                    label: 'Rating',
-                    data: [3, 3, 2, 3, 2, 1],
-                    backgroundColor: ['#06ffa5','#06ffa5','#ffd60a','#06ffa5','#ffd60a','#ff6b35'],
-                    borderColor:      ['#06ffa5','#06ffa5','#ffd60a','#06ffa5','#ffd60a','#ff6b35'],
-                    borderWidth: 2,
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                scales: {
-                    x: {
-                        min: 0, max: 4,
-                        ticks: {
-                            stepSize: 1, color: '#a8a8c0',
-                            callback: v => ['','Below','Slightly Below','Mostly Aligned','Fully Aligned'][v] || ''
-                        },
-                        grid: { color: '#2a2a3f' }
-                    },
-                    y: {
-                        ticks: { color: '#e8e8f0', font: { size: 11, weight: '600' } },
-                        grid: { display: false }
-                    }
-                },
-                plugins: { legend: { display: false } }
-            }
+            data: { labels:['Impact','Growth Mindset','Customer First','Make it Simple','We Over I','Deliver Sustainably'], datasets:[{ label:'Rating', data:[3,3,2,3,2,1], backgroundColor:['#06ffa5','#06ffa5','#ffd60a','#06ffa5','#ffd60a','#ff6b35'], borderColor:['#06ffa5','#06ffa5','#ffd60a','#06ffa5','#ffd60a','#ff6b35'], borderWidth:2, borderRadius:8 }] },
+            options: { indexAxis:'y', scales: { x:{min:0,max:4,ticks:{stepSize:1,color:'#a8a8c0',callback:v=>['','Below','Slightly Below','Mostly Aligned','Fully Aligned'][v]||''},grid:{color:'#2a2a3f'}}, y:{ticks:{color:'#e8e8f0',font:{size:11,weight:'600'}},grid:{display:false}} }, plugins:{legend:{display:false}} }
         });
 
-        // Initial render
-        renderProjects();
+        listenProjects();
     });
     </script>
 </body>
