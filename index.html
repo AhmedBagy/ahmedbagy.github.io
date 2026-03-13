@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" sizes="512x512" href="logo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Supabase JS SDK v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --dark-bg: #0a0a0f;
@@ -549,51 +551,43 @@
 
     <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
     <script>
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  FIREBASE CONFIG
+    //  SUPABASE CONFIG
+    //  Replace these two values with your own project credentials:
+    //  Dashboard → Settings → API
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    const firebaseConfig = {
-        apiKey: 'AIzaSyDED8MOS9DQbmeENcliTUsbVQMEY7MhM-I',
-        authDomain: 'first-fdead.firebaseapp.com',
-        projectId: 'first-fdead',
-        storageBucket: 'first-fdead.firebasestorage.app',
-        messagingSenderId: '439058830455',
-        appId: '1:439058830455:web:9806ca34b17fccffc92272',
-        measurementId: 'G-8HCS8LVPY5'
-    };
+    const SUPABASE_URL  = 'https://YOUR_PROJECT_REF.supabase.co';
+    const SUPABASE_ANON = 'YOUR_ANON_PUBLIC_KEY';
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db   = firebase.firestore();
-    const projectsCol = db.collection('projects');
+    const { createClient } = supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  AUTHORISED ADMIN EMAIL — only this Gmail can write
+    //  AUTHORISED ADMIN EMAIL
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     const ADMIN_EMAIL = 'ahmedbagy@gmail.com';
 
     let isAdmin = false;
     let editingId = null;
     let cachedProjects = [];
+    let realtimeChannel = null;
 
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    //  AUTH — Supabase Google OAuth
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    // ── Auth state observer ──────────────────────────
-    // Fires on page load and whenever sign-in/out happens
-    auth.onAuthStateChanged(user => {
+    // Listen for auth state changes (fires on load + sign-in/out)
+    sb.auth.onAuthStateChange(async (event, session) => {
+        const user = session?.user ?? null;
+
         if (user && user.email === ADMIN_EMAIL) {
             setAdminState(true, user);
             showSignedInUI(user);
         } else {
             if (user) {
-                // Someone signed in with the wrong Google account
-                auth.signOut();
+                // Wrong Google account — sign them out immediately
+                await sb.auth.signOut();
                 showAuthError('That Google account is not authorised. Please use the admin account.');
             }
             setAdminState(false, null);
@@ -601,26 +595,31 @@
         }
     });
 
-    // ── Google Sign-In ───────────────────────────────
+    // Google Sign-In via OAuth popup/redirect
     document.getElementById('btnGoogleSignIn').addEventListener('click', async () => {
         const btn = document.getElementById('btnGoogleSignIn');
         btn.disabled = true;
         btn.textContent = 'Opening Google…';
         document.getElementById('authError').style.display = 'none';
-        try {
-            await auth.signInWithPopup(googleProvider);
-            // onAuthStateChanged handles the rest
-        } catch (err) {
-            if (err.code !== 'auth/popup-closed-by-user') {
-                showAuthError('Sign-in failed: ' + err.message);
+
+        const { error } = await sb.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                // Redirect back to the same page after OAuth
+                redirectTo: window.location.href
             }
+        });
+
+        if (error) {
+            showAuthError('Sign-in failed: ' + error.message);
             resetGoogleBtn();
         }
+        // On success the browser navigates away; onAuthStateChange handles the rest on return
     });
 
-    // ── Sign Out ─────────────────────────────────────
+    // Sign Out
     document.getElementById('btnSignOut').addEventListener('click', async () => {
-        await auth.signOut();
+        await sb.auth.signOut();
         closeAuthModal();
     });
 
@@ -647,8 +646,8 @@
         document.getElementById('authError').style.display = 'none';
         const strip = document.getElementById('adminUserStrip');
         strip.classList.add('visible');
-        document.getElementById('adminUserPhoto').src = user.photoURL || '';
-        document.getElementById('adminUserName').textContent = user.displayName || user.email;
+        document.getElementById('adminUserPhoto').src = user.user_metadata?.avatar_url || '';
+        document.getElementById('adminUserName').textContent = user.user_metadata?.full_name || user.email;
     }
 
     function showSignedOutUI() {
@@ -657,12 +656,11 @@
         document.getElementById('adminUserStrip').classList.remove('visible');
     }
 
-    // ── Auth Modal ───────────────────────────────────
+    // ── Auth Modal ────────────────────────────────────
     function openAuthModal() {
         document.getElementById('authError').style.display = 'none';
         document.getElementById('authModal').classList.add('open');
     }
-
     function closeAuthModal() {
         document.getElementById('authModal').classList.remove('open');
     }
@@ -672,7 +670,7 @@
         if (e.target === document.getElementById('authModal')) closeAuthModal();
     });
 
-    // ── Logo triple-click ────────────────────────────
+    // Logo triple-click to open auth modal
     let logoClicks = 0, logoTimer = null;
     document.getElementById('navLogo').addEventListener('click', () => {
         logoClicks++;
@@ -681,21 +679,23 @@
         if (logoClicks >= 3) { logoClicks = 0; openAuthModal(); }
     });
 
-    // ── Admin State ──────────────────────────────────
+    // ── Admin State ───────────────────────────────────
     function setAdminState(active, user) {
         isAdmin = active;
         document.getElementById('adminDot').classList.toggle('active', active);
         document.getElementById('adminLabel').textContent = active
-            ? 'Admin: ' + ((user.displayName || user.email).split(' ')[0])
+            ? 'Admin: ' + ((user.user_metadata?.full_name || user.email).split(' ')[0])
             : 'Public View';
         renderProjects(cachedProjects);
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  PROJECTS
+    //  PROJECTS — Supabase Postgres + Realtime
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     function escHtml(str) {
-        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        return String(str)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     function renderProjects(projects) {
@@ -711,16 +711,27 @@
         projects.forEach(proj => {
             const card = document.createElement('div');
             card.className = 'project-card';
-            const tagsHtml = (proj.tags||[]).map(t=>'<span class="project-tag">'+escHtml(t.trim())+'</span>').join('');
-            const linkHtml = proj.link ? '<a class="project-link" href="'+escHtml(proj.link)+'" target="_blank" rel="noopener">View Project &#8594;</a>' : '';
+
+            // tags is stored as a Postgres text[] array; Supabase JS returns it as a JS array
+            const tagsArr = Array.isArray(proj.tags) ? proj.tags : [];
+            const tagsHtml = tagsArr.map(t => '<span class="project-tag">' + escHtml(t.trim()) + '</span>').join('');
+            const linkHtml = proj.link
+                ? '<a class="project-link" href="' + escHtml(proj.link) + '" target="_blank" rel="noopener">View Project &#8594;</a>'
+                : '';
             const adminHtml = isAdmin
                 ? '<div class="project-admin-actions visible">'
-                  +'<button class="btn-edit" onclick="openEditModal(\''+proj.id+'\')">Edit</button>'
-                  +'<button class="btn-delete" onclick="deleteProject(\''+proj.id+'\')">Delete</button>'
-                  +'</div>' : '';
-            card.innerHTML = '<div class="project-title">'+escHtml(proj.title)+'</div>'
-                +'<p class="project-desc">'+escHtml(proj.desc)+'</p>'
-                +(tagsHtml?'<div class="project-tags">'+tagsHtml+'</div>':'')+linkHtml+adminHtml;
+                  + '<button class="btn-edit" onclick="openEditModal(\'' + proj.id + '\')">Edit</button>'
+                  + '<button class="btn-delete" onclick="deleteProject(\'' + proj.id + '\')">Delete</button>'
+                  + '</div>'
+                : '';
+
+            card.innerHTML =
+                '<div class="project-title">' + escHtml(proj.title) + '</div>'
+                + '<p class="project-desc">' + escHtml(proj.description) + '</p>'
+                + (tagsHtml ? '<div class="project-tags">' + tagsHtml + '</div>' : '')
+                + linkHtml
+                + adminHtml;
+
             grid.appendChild(card);
         });
 
@@ -733,21 +744,41 @@
         }
     }
 
-    function listenProjects() {
-        document.getElementById('projectsGrid').innerHTML = '<div class="projects-empty"><p>Loading projects...</p></div>';
-        projectsCol.orderBy('created','asc').onSnapshot(snapshot => {
-            renderProjects(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        }, err => {
-            console.error('Firestore:', err);
-            document.getElementById('projectsGrid').innerHTML = '<div class="projects-empty"><p>Could not load projects.</p></div>';
-        });
+    async function fetchProjects() {
+        const { data, error } = await sb
+            .from('projects')
+            .select('*')
+            .order('created_at', { ascending: true });
+
+        if (error) {
+            console.error('Supabase fetch error:', error);
+            document.getElementById('projectsGrid').innerHTML =
+                '<div class="projects-empty"><p>Could not load projects.</p></div>';
+            return;
+        }
+        renderProjects(data || []);
     }
 
-    // ── Project Modal ────────────────────────────────
+    function subscribeRealtime() {
+        // Remove any previous subscription
+        if (realtimeChannel) sb.removeChannel(realtimeChannel);
+
+        realtimeChannel = sb
+            .channel('projects-changes')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'projects' },
+                () => fetchProjects()   // re-fetch on any INSERT / UPDATE / DELETE
+            )
+            .subscribe();
+    }
+
+    // ── Project Modal ──────────────────────────────────
     function openAddModal() {
         editingId = null;
         document.getElementById('projectModalTitle').textContent = 'Add Project';
-        ['projTitle','projDesc','projTags','projLink'].forEach(id => document.getElementById(id).value = '');
+        ['projTitle','projDesc','projTags','projLink'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
         document.getElementById('projectModal').classList.add('open');
         setTimeout(() => document.getElementById('projTitle').focus(), 100);
     }
@@ -758,8 +789,8 @@
         editingId = id;
         document.getElementById('projectModalTitle').textContent = 'Edit Project';
         document.getElementById('projTitle').value = proj.title;
-        document.getElementById('projDesc').value = proj.desc;
-        document.getElementById('projTags').value = (proj.tags||[]).join(', ');
+        document.getElementById('projDesc').value = proj.description;
+        document.getElementById('projTags').value = (proj.tags || []).join(', ');
         document.getElementById('projLink').value = proj.link || '';
         document.getElementById('projectModal').classList.add('open');
         setTimeout(() => document.getElementById('projTitle').focus(), 100);
@@ -771,31 +802,50 @@
     }
 
     async function saveProject() {
-        const title = document.getElementById('projTitle').value.trim();
-        const desc  = document.getElementById('projDesc').value.trim();
-        const tags  = document.getElementById('projTags').value.trim().split(',').map(t=>t.trim()).filter(Boolean);
-        const link  = document.getElementById('projLink').value.trim();
-        if (!title || !desc) { alert('Title and Description are required.'); return; }
+        const title       = document.getElementById('projTitle').value.trim();
+        const description = document.getElementById('projDesc').value.trim();
+        const tags        = document.getElementById('projTags').value.trim()
+                               .split(',').map(t => t.trim()).filter(Boolean);
+        const link        = document.getElementById('projLink').value.trim();
+
+        if (!title || !description) {
+            alert('Title and Description are required.');
+            return;
+        }
+
         const btn = document.getElementById('projectSaveBtn');
-        btn.textContent = 'Saving...'; btn.disabled = true;
+        btn.textContent = 'Saving…';
+        btn.disabled = true;
+
         try {
+            let error;
             if (editingId) {
-                await projectsCol.doc(editingId).update({ title, desc, tags, link });
+                ({ error } = await sb
+                    .from('projects')
+                    .update({ title, description, tags, link })
+                    .eq('id', editingId));
             } else {
-                await projectsCol.add({ title, desc, tags, link, created: firebase.firestore.FieldValue.serverTimestamp() });
+                ({ error } = await sb
+                    .from('projects')
+                    .insert([{ title, description, tags, link }]));
             }
+
+            if (error) throw error;
             closeProjectModal();
+            await fetchProjects(); // Realtime will also fire; fetchProjects is a safe double-call
         } catch (err) {
             alert('Error saving project: ' + err.message);
         } finally {
-            btn.textContent = 'Save Project'; btn.disabled = false;
+            btn.textContent = 'Save Project';
+            btn.disabled = false;
         }
     }
 
     async function deleteProject(id) {
         if (!confirm('Delete this project?')) return;
-        try { await projectsCol.doc(id).delete(); }
-        catch (err) { alert('Error: ' + err.message); }
+        const { error } = await sb.from('projects').delete().eq('id', id);
+        if (error) alert('Error: ' + error.message);
+        // Realtime subscription will trigger a re-render automatically
     }
 
     document.getElementById('projectClose').addEventListener('click', closeProjectModal);
@@ -828,42 +878,52 @@
             type: 'radar',
             data: {
                 labels: ['Connections','Creativity','Drive','Thinking'],
-                datasets: [{ label:'My Profile', data:[78,82,55,90], fill:true,
-                    backgroundColor:'rgba(255,107,53,0.2)', borderColor:'#ff6b35',
-                    pointBackgroundColor:'#ff6b35', pointBorderColor:'#fff',
-                    pointHoverBackgroundColor:'#fff', pointHoverBorderColor:'#ff6b35',
-                    pointRadius:6, pointHoverRadius:8, borderWidth:3 }]
+                datasets: [{
+                    label: 'My Profile', data: [78,82,55,90], fill: true,
+                    backgroundColor: 'rgba(255,107,53,0.2)', borderColor: '#ff6b35',
+                    pointBackgroundColor: '#ff6b35', pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff', pointHoverBorderColor: '#ff6b35',
+                    pointRadius: 6, pointHoverRadius: 8, borderWidth: 3
+                }]
             },
             options: {
                 scales: { r: { min:0, max:100, beginAtZero:true,
-                    ticks:{stepSize:20,color:'#a8a8c0',backdropColor:'transparent'},
-                    grid:{color:'#2a2a3f'}, pointLabels:{color:'#e8e8f0',font:{size:14,weight:'600'}} }},
-                plugins:{legend:{display:false}}
+                    ticks:{ stepSize:20, color:'#a8a8c0', backdropColor:'transparent' },
+                    grid:{ color:'#2a2a3f' },
+                    pointLabels:{ color:'#e8e8f0', font:{ size:14, weight:'600' } }
+                }},
+                plugins:{ legend:{ display:false } }
             }
         });
 
         new Chart(document.getElementById('cokeCompetencies').getContext('2d'), {
             type: 'bar',
             data: {
-                labels:['Impact','Growth Mindset','Customer First','Make it Simple','We Over I','Deliver Sustainably'],
-                datasets:[{ label:'Rating', data:[3,3,2,3,2,1],
-                    backgroundColor:['#06ffa5','#06ffa5','#ffd60a','#06ffa5','#ffd60a','#ff6b35'],
-                    borderColor:    ['#06ffa5','#06ffa5','#ffd60a','#06ffa5','#ffd60a','#ff6b35'],
-                    borderWidth:2, borderRadius:8 }]
+                labels: ['Impact','Growth Mindset','Customer First','Make it Simple','We Over I','Deliver Sustainably'],
+                datasets: [{
+                    label: 'Rating', data: [3,3,2,3,2,1],
+                    backgroundColor: ['#06ffa5','#06ffa5','#ffd60a','#06ffa5','#ffd60a','#ff6b35'],
+                    borderColor:     ['#06ffa5','#06ffa5','#ffd60a','#06ffa5','#ffd60a','#ff6b35'],
+                    borderWidth: 2, borderRadius: 8
+                }]
             },
             options: {
-                indexAxis:'y',
-                scales:{
-                    x:{min:0,max:4,ticks:{stepSize:1,color:'#a8a8c0',
-                        callback:v=>['','Below','Slightly Below','Mostly Aligned','Fully Aligned'][v]||''},
-                        grid:{color:'#2a2a3f'}},
-                    y:{ticks:{color:'#e8e8f0',font:{size:11,weight:'600'}},grid:{display:false}}
+                indexAxis: 'y',
+                scales: {
+                    x:{ min:0, max:4, ticks:{ stepSize:1, color:'#a8a8c0',
+                        callback: v => ['','Below','Slightly Below','Mostly Aligned','Fully Aligned'][v] || '' },
+                        grid:{ color:'#2a2a3f' }},
+                    y:{ ticks:{ color:'#e8e8f0', font:{ size:11, weight:'600' } }, grid:{ display:false } }
                 },
-                plugins:{legend:{display:false}}
+                plugins:{ legend:{ display:false } }
             }
         });
 
-        listenProjects();
+        // Initial load + realtime subscription
+        document.getElementById('projectsGrid').innerHTML =
+            '<div class="projects-empty"><p>Loading projects…</p></div>';
+        fetchProjects();
+        subscribeRealtime();
     });
     </script>
 </body>
