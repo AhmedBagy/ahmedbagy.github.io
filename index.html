@@ -1137,9 +1137,12 @@ Keep answers concise and clear.`;
         appendTyping();
 
         try {
+            const systemTurn = [
+                { role: 'user', parts: [{ text: systemPrompt }] },
+                { role: 'model', parts: [{ text: 'Understood. I will act as Ahmed\'s assistant.' }] }
+            ];
             const body = {
-                system_instruction: { parts: [{ text: systemPrompt }] },
-                contents: chatHistory
+                contents: [...systemTurn, ...chatHistory]
             };
 
             const res = await fetch(
