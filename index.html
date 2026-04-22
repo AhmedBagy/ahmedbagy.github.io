@@ -616,16 +616,13 @@
                             <div class="msg-bubble">Hi! I'm Ahmed's AI assistant. Ask me anything about his experience, skills, projects, or geophysics/data analysis topics. How can I help?</div>
                         </div>
                     </div>
-                    <div class="chat-api-key-row" id="apiKeyRow">
-                        <input class="chat-api-input" type="password" id="geminiKeyInput" placeholder="Paste your Gemini API key to activate chat…">
-                        <button class="chat-api-save-btn" id="saveApiKey">Activate</button>
-                    </div>
+
                     <div class="chat-input-row">
-                        <input class="chat-input" type="text" id="chatInput" placeholder="Ask about Ahmed's experience, skills, projects…" disabled>
-                        <button class="chat-send-btn" id="chatSendBtn" disabled>➤</button>
+                        <input class="chat-input" type="text" id="chatInput" placeholder="Ask about Ahmed's experience, skills, projects…">
+                        <button class="chat-send-btn" id="chatSendBtn">➤</button>
                     </div>
                 </div>
-                <p class="chat-api-note">Get a free Gemini API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent-purple)">aistudio.google.com</a>. Key is stored only in your browser session.</p>
+
             </div>
         </section>
 
@@ -729,7 +726,7 @@ If asked about topics unrelated to Ahmed or his professional field, you can stil
 Keep answers concise and clear.`;
 
     let systemPrompt = FALLBACK_SYSTEM_PROMPT;
-    let geminiApiKey = sessionStorage.getItem('geminiKey') || '';
+    const PROXY_URL = 'https://gemini-proxy-kappa-indol.vercel.app/api/chat';
     let chatHistory = [];
 
     // Try to fetch system prompt from Supabase `settings` table
@@ -1072,26 +1069,7 @@ Keep answers concise and clear.`;
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     //  GEMINI CHAT
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    function activateChat() {
-        const key = geminiApiKey.trim();
-        if (!key) return;
-        document.getElementById('chatInput').disabled = false;
-        document.getElementById('chatSendBtn').disabled = false;
-        document.getElementById('apiKeyRow').style.display = 'none';
-        document.getElementById('chatInput').focus();
-    }
 
-    if (geminiApiKey) activateChat();
-
-    document.getElementById('saveApiKey').addEventListener('click', () => {
-        geminiApiKey = document.getElementById('geminiKeyInput').value.trim();
-        if (!geminiApiKey) { alert('Please paste a valid Gemini API key.'); return; }
-        sessionStorage.setItem('geminiKey', geminiApiKey);
-        activateChat();
-    });
-    document.getElementById('geminiKeyInput').addEventListener('keydown', e => {
-        if (e.key === 'Enter') document.getElementById('saveApiKey').click();
-    });
 
     function appendMsg(role, text) {
         const msgs = document.getElementById('chatMessages');
@@ -1129,7 +1107,7 @@ Keep answers concise and clear.`;
         const input = document.getElementById('chatInput');
         const btn = document.getElementById('chatSendBtn');
         const text = input.value.trim();
-        if (!text || !geminiApiKey) return;
+        if (!text) return;
 
         input.value = ''; input.disabled = true; btn.disabled = true;
         appendMsg('user', text);
@@ -1137,16 +1115,13 @@ Keep answers concise and clear.`;
         appendTyping();
 
         try {
-            const systemTurn = [
-                { role: 'user', parts: [{ text: systemPrompt }] },
-                { role: 'model', parts: [{ text: 'Understood. I will act as Ahmed\'s assistant.' }] }
-            ];
             const body = {
-                contents: [...systemTurn, ...chatHistory]
+                system_instruction: { parts: [{ text: systemPrompt }] },
+                contents: chatHistory
             };
 
             const res = await fetch(
-                `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`,
+                PROXY_URL,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
