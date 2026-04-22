@@ -613,7 +613,7 @@
                     <div class="chat-messages" id="chatMessages">
                         <div class="chat-msg bot">
                             <div class="msg-avatar">🤖</div>
-                            <div class="msg-bubble">Hi! I'm Ahmed's AI assistant. Ask me anything about his experience, skills, projects, or geophysics/data analysis topics. How can I help?</div>
+                            <div class="msg-bubble">Hi! I'm Bagy's AI assistant. Ask me anything about his experience, skills, projects, or geophysics/data analysis topics. How can I help?</div>
                         </div>
                     </div>
 
@@ -716,32 +716,8 @@
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     //  GEMINI SYSTEM PROMPT (fetched from Supabase or fallback)
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    const FALLBACK_SYSTEM_PROMPT = `You are Ahmed Bagy's personal AI assistant on his portfolio website.
-Ahmed is a Data Analyst and Media Operations Specialist at Pixelogic Media in Cairo, Egypt.
-He holds an MSc in Geophysics from Helwan University and a DataCamp Certified Data Analyst credential.
-His skills include Python, SQL, Metabase, Power BI, ETL pipelines, batch scripting, Petrel, Hampson-Russell, Adobe Suite, and more.
-He has experience in seismic interpretation, reservoir characterization, AVO analysis, and 3D modeling.
-Answer questions about his background, skills, projects, and experience in a professional but friendly tone.
-If asked about topics unrelated to Ahmed or his professional field, you can still help but gently steer back.
-Keep answers concise and clear.`;
-
-    let systemPrompt = FALLBACK_SYSTEM_PROMPT;
     const PROXY_URL = 'https://gemini-proxy-kappa-indol.vercel.app/api/chat';
     let chatHistory = [];
-
-    // Try to fetch system prompt from Supabase `settings` table
-    async function loadSystemPrompt() {
-        try {
-            const { data, error } = await sb
-                .from('settings')
-                .select('value')
-                .eq('key', 'ai_system_prompt')
-                .single();
-            if (!error && data?.value) {
-                systemPrompt = data.value;
-            }
-        } catch(e) { /* use fallback */ }
-    }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     //  STATE
@@ -1116,7 +1092,6 @@ Keep answers concise and clear.`;
 
         try {
             const body = {
-                system_instruction: { parts: [{ text: systemPrompt }] },
                 contents: chatHistory
             };
 
@@ -1228,7 +1203,6 @@ Keep answers concise and clear.`;
 
         fetchAll();
         subscribeRealtime();
-        loadSystemPrompt();
     });
     </script>
 </body>
