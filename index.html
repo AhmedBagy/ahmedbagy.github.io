@@ -753,7 +753,7 @@
         document.getElementById('authError').style.display = 'none';
         const { error } = await sb.auth.signInWithOAuth({
             provider: 'google',
-            options: { redirectTo: https://ahmedbagy.github.io/ }
+            options: { redirectTo: window.location.href }
         });
         if (error) { showAuthError('Sign-in failed: ' + error.message); resetGoogleBtn(); }
     });
