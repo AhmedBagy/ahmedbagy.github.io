@@ -733,6 +733,7 @@
     //  AUTH
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     sb.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN') history.replaceState(null, '', '/');
         const user = session?.user ?? null;
         if (user && user.email === ADMIN_EMAIL) {
             setAdminState(true, user);
