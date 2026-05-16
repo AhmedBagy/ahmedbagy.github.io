@@ -753,7 +753,7 @@
         document.getElementById('authError').style.display = 'none';
         const { error } = await sb.auth.signInWithOAuth({
             provider: 'google',
-            options: { redirectTo: window.location.href }
+            options: { redirectTo: window.location.href.split('#')[0] }
         });
         if (error) { showAuthError('Sign-in failed: ' + error.message); resetGoogleBtn(); }
     });
